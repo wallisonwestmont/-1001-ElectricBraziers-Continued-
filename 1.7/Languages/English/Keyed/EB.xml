@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<LanguageData>
+	<ElectricBraziers>Electric Braziers</ElectricBraziers>
+	<EB.UseBaseGameBrazierTexture>Use Original Brazier Texture</EB.UseBaseGameBrazierTexture>
+	<EB.ToggleGlowColor>Toggle Glow Color</EB.ToggleGlowColor>
+	<EB.ToggleGlowColorDesc>Toggle the color of the glow between normal and dark light.</EB.ToggleGlowColorDesc>
+</LanguageData>
