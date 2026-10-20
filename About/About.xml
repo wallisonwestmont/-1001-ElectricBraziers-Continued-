@@ -9,27 +9,47 @@
 		<li>1.7</li>
 	</supportedVersions>
   <packageId>electricbraziers.papercrane.rw</packageId>
-	<description>Provides an Electric Brazier that satisfies throne room requirements. 
-  Requires Royalty DLC installed. 
-  May not work for custom Empires and Royalty Titles.
-  
-  Thanks to Solarius Scorch for the texture work.
-  
-  Link to original:
-  https://steamcommunity.com/sharedfiles/filedetails/?id=2555623506
-  
-  Like my mod?  Donate at:
-	https://ko-fi.com/papercrane1001
-	
-	I use the MIT license: https://opensource.org/licenses/MIT
-	which mostly says that if you use my code, please give me credit.  
-	
-	GitHub at: https://github.com/papercrane1001/-1001-ElectricBraziers-Continued-
-	
-	Paintable update thanks to Sh-
-	
-	\n\nVersion 2.0.4
-	\nFor version 1.4, 1.5, and 1.6
+	<description>Provides an Electric Brazier that satisfies throne room requirements.
+Requires Royalty DLC installed.
+May not work for custom Empires and Royalty Titles.
+
+Thanks to Solarius Scorch for the texture work.
+
+Link to original:
+https://steamcommunity.com/sharedfiles/filedetails/?id=2555623506
+
+
+
+1.7 NOTE:
+I'm testing a LLM AI with this, specifically using Claude Opus 5.5. The logs are available on the git page, and my notes on the experience are below.
+
+Duplicated incorrect location of library folders.
+
+Hallucinating dll's that don't exist to explain a problem.
+Hallucinating an xml that would never exist
+Incorrect powershell instructions
+
+Made unrequested changes, esp. fixing something that it had no way of knowing whether it was a bug or a feature
+
+Made filesystem changes without asking and without reporting
+Made an extra copy of the project file without asking and without actually using it in that or any other steps
+
+
+
+
+Like my mod? Donate at:
+[Redacted because the use of AI makes me feel uncomfortable]
+
+I use the MIT license: https://opensource.org/licenses/MIT
+which mostly says that if you use my code, please give me credit.
+
+GitHub at: https://github.com/papercrane1001/-1001-ElectricBraziers-Continued-
+
+
+
+Version 2.1.0-1.7
+
+For version 1.4, 1.5, 1.6, and 1.7
   </description>
   <url>https://github.com/papercrane1001/-1001-ElectricBraziers-Continued-</url>
   <loadAfter>

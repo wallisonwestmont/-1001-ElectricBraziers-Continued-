@@ -29,7 +29,7 @@ namespace EB
 			{
 				Vector3 drawPos = parent.DrawPos;
 				drawPos.y += 3f / 74f;
-				if (this.toggleComp.IsDarklight)
+				if (this.toggleComp != null && this.toggleComp.IsDarklight)
 					DarkFireGraphic.Draw(drawPos, Rot4.North, parent);
 				else
 					FireGraphic.Draw(drawPos, Rot4.North, parent);
@@ -41,7 +41,7 @@ namespace EB
 			base.PostSpawnSetup(respawningAfterLoad);
 			this.poweredComp = this.parent.GetComp<CompPowerTrader>();
 			this.toggleComp = this.parent.GetComp<CompToggleGlower>();
-			this.toggleComp.RegisterParentPowerTracer(this.poweredComp);
+			this.toggleComp?.RegisterParentPowerTracer(this.poweredComp);
 		}
 	}
 }

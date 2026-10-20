@@ -75,10 +75,12 @@ namespace EB
 
         private void SetLightColor()
         {
+            // Set this brazier's own color override. Writing to Props.glowColor would
+            // change the shared def and recolor every electric brazier on the map.
             if (IsDarklight)
-                base.Props.glowColor = new ColorInt(78, 226, 229, 0);
+                GlowColor = new ColorInt(78, 226, 229, 0);
             else
-                base.Props.glowColor = new ColorInt(252, 187, 113, 0);
+                GlowColor = new ColorInt(252, 187, 113, 0);
         }
 
         public override void PostExposeData()
