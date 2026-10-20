@@ -5,43 +5,6 @@ using Verse;
 
 namespace EB
 {
-    /// <summary>
-    /// Drives the hologram shader. The clock only advances, and flicker is only enabled,
-    /// while the game is unpaused at normal (1x) speed. At any other speed the hologram holds still.
-    /// Values are pushed as shader globals (same mechanism the game uses for _GameSeconds).
-    /// </summary>
-    public static class HoloClock
-    {
-        private static readonly int TimeId = Shader.PropertyToID("_EBHoloTime");
-        private static readonly int FlickerId = Shader.PropertyToID("_EBHoloFlicker");
-
-        private static int lastFrame = -1;
-        private static float time;
-
-        public static float Time => time;
-        public static bool Running { get; private set; }
-
-        public static void Update()
-        {
-            int frame = UnityEngine.Time.frameCount;
-            if (frame == lastFrame)
-                return;
-            lastFrame = frame;
-
-            TickManager tm = Find.TickManager;
-            Running = tm != null && !tm.Paused && tm.CurTimeSpeed == TimeSpeed.Normal;
-            if (Running)
-                time += Mathf.Min(UnityEngine.Time.unscaledDeltaTime, 0.1f);
-
-            // Keep the value small so float precision in the shader stays good on long sessions.
-            if (time > 3600f)
-                time -= 3600f;
-
-            Shader.SetGlobalFloat(TimeId, time);
-            Shader.SetGlobalFloat(FlickerId, Running ? 1f : 0f);
-        }
-    }
-
     public class CompProperties_HoloBrazier : CompProperties
     {
         public string shaderDef = "ElectricBrazier_Hologram";
@@ -53,7 +16,9 @@ namespace EB
         public List<string> flameTexPaths = new List<string>();
         public float flameSize = 0.83f;
         public Vector3 flameOffset = new Vector3(0f, 0f, 0.18f);
-        public float flameFramesPerSecond = 6f;
+        // Relative odds of each flame frame being picked on a long tick (A : B : C).
+        // 6 : 2 : 1  ->  A = 2/3, B = 2/3 of the remaining 1/3 (2/9), C = the rest (1/9).
+        public List<float> flameFrameWeights = new List<float> { 6f, 2f, 1f };
         public Color flameColor = new Color(0.65f, 0.9f, 1f, 0.9f);
         public Color flameColorDarklight = new Color(0.35f, 0.95f, 0.95f, 0.9f);
 
@@ -63,7 +28,10 @@ namespace EB
         }
     }
 
-    /// <summary>Draws the holographic brazier body and flame above the projector disc while powered.</summary>
+    /// <summary>
+    /// Draws the holographic brazier body and flame above the projector disc while powered.
+    /// The flame frame is re-rolled once per long tick (needs tickerType Long); drawing just reuses it.
+    /// </summary>
     public class CompHoloBrazier : ThingComp
     {
         private CompPowerTrader power;
@@ -73,6 +41,7 @@ namespace EB
         private Material[] flameMats;
         private Material[] flameMatsDark;
         private bool matsResolved;
+        private int curFrame;
 
         public CompProperties_HoloBrazier Props => (CompProperties_HoloBrazier)props;
 
@@ -82,6 +51,35 @@ namespace EB
             power = parent.GetComp<CompPowerTrader>();
             toggle = parent.GetComp<CompToggleGlower>();
             toggle?.RegisterParentPowerTracer(power);
+        }
+
+        public override void CompTickLong()
+        {
+            base.CompTickLong();
+            curFrame = RollFrame();
+        }
+
+        private int RollFrame()
+        {
+            int n = Props.flameTexPaths.Count;
+            if (n <= 1)
+                return 0;
+
+            List<float> w = Props.flameFrameWeights;
+            float total = 0f;
+            for (int i = 0; i < n; i++)
+                total += (w != null && i < w.Count) ? w[i] : 0f;
+            if (total <= 0f)
+                return 0;
+
+            float roll = Rand.Value * total;
+            for (int i = 0; i < n; i++)
+            {
+                roll -= (w != null && i < w.Count) ? w[i] : 0f;
+                if (roll < 0f)
+                    return i;
+            }
+            return 0;
         }
 
         private void ResolveMaterials()
@@ -114,7 +112,6 @@ namespace EB
             if (power == null || !power.PowerOn)
                 return;
 
-            HoloClock.Update();
             if (!matsResolved)
                 ResolveMaterials();
 
@@ -129,9 +126,7 @@ namespace EB
 
             if (flameMats != null && flameMats.Length > 0)
             {
-                // Frame advances on the hologram clock, so it freezes when paused or fast-forwarded.
-                int offset = Mathf.Abs(parent.thingIDNumber * 7919) % flameMats.Length;
-                int frame = ((int)(HoloClock.Time * Props.flameFramesPerSecond) + offset) % flameMats.Length;
+                int frame = curFrame < flameMats.Length ? curFrame : 0;
                 Material[] set = (toggle != null && toggle.IsDarklight) ? flameMatsDark : flameMats;
 
                 Vector3 fpos = pos + Props.flameOffset;

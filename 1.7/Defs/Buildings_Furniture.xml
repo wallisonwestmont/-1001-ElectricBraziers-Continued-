@@ -112,7 +112,7 @@
     <label>holographic brazier</label>
     <description>A floor-mounted emitter that projects a flickering hologram of a lit brazier. It gives light and counts as a brazier for royal rooms and meditation, but gives off no heat. The emitter is flush with the floor, so anyone may walk across it freely.</description>
     <category>Building</category>
-    <tickerType>Normal</tickerType>
+    <tickerType>Long</tickerType>
     <drawerType>MapMeshAndRealTime</drawerType>
     <altitudeLayer>FloorEmplacement</altitudeLayer>
     <passability>Standable</passability>
@@ -192,7 +192,7 @@
     <canOverlapZones>true</canOverlapZones>
     <rotatable>false</rotatable>
     <researchPrerequisites>
-      <li>EB_HolographicBraziers</li>
+      <li>Fabrication</li>
     </researchPrerequisites>
     <graphicData>
       <texPath>Things/Building/Misc/HolographicBrazier/ProjectorDisc</texPath>
