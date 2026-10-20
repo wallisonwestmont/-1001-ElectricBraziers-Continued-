@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+
+  <!-- Holographic brazier body + flame. Source: 1.7/Shaders/ElectricBrazier_Hologram.frag.glsl
+       Uses the engine's default vertex shader (SceneDefault.vert.glsl).
+       Render queue 3150 matches TransparentPostLight, so the hologram isn't darkened at night. -->
+  <ShaderDef>
+    <defName>ElectricBrazier_Hologram</defName>
+    <shaderProgram>
+      <fragmentShaderFileName>ElectricBrazier_Hologram.frag.glsl</fragmentShaderFileName>
+      <transparent>true</transparent>
+      <depthWrite>false</depthWrite>
+      <renderQueue>3150</renderQueue>
+    </shaderProgram>
+  </ShaderDef>
+
+</Defs>

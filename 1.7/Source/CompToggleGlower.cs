@@ -20,6 +20,10 @@ namespace EB
 
     public class CompProperties_ToggleGlower : CompProperties_Glower
     {
+        // Glow colors for the two modes. Defaults match the original electric brazier.
+        public ColorInt normalColor = new ColorInt(252, 187, 113, 0);
+        public ColorInt darkColor = new ColorInt(78, 226, 229, 0);
+
         public CompProperties_ToggleGlower()
         {
             base.compClass = typeof(CompToggleGlower);
@@ -77,10 +81,8 @@ namespace EB
         {
             // Set this brazier's own color override. Writing to Props.glowColor would
             // change the shared def and recolor every electric brazier on the map.
-            if (IsDarklight)
-                GlowColor = new ColorInt(78, 226, 229, 0);
-            else
-                GlowColor = new ColorInt(252, 187, 113, 0);
+            var p = (CompProperties_ToggleGlower)props;
+            GlowColor = IsDarklight ? p.darkColor : p.normalColor;
         }
 
         public override void PostExposeData()

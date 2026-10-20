@@ -41,7 +41,8 @@ namespace EB
                         }
                         if (l != null && fso != null)
                         {
-                            fso.defs.Add(new MeditationFocusOffsetPerBuilding(DefOf.ElectricBrazier, l.offset));
+                            foreach (var extra in ExtraBraziers)
+                                fso.defs.Add(new MeditationFocusOffsetPerBuilding(extra, l.offset));
                         }
                         else
                         {
@@ -75,14 +76,24 @@ namespace EB
             }
         }
 
+        /// <summary>Our braziers that should count wherever a vanilla brazier counts.</summary>
+        public static System.Collections.Generic.IEnumerable<ThingDef> ExtraBraziers
+        {
+            get
+            {
+                if (DefOf.ElectricBrazier != null) yield return DefOf.ElectricBrazier;
+                if (DefOf.HolographicBrazier != null) yield return DefOf.HolographicBrazier;
+            }
+        }
+
         private static bool AddElectricBrazier(RoomRequirement_ThingAnyOf rr)
         {
-            if (rr.things.Contains(DefOf.Brazier))
-            {
-                rr.things.Add(DefOf.ElectricBrazier);
-                return true;
-            }
-            return false;
+            if (!rr.things.Contains(DefOf.Brazier))
+                return false;
+            foreach (var extra in ExtraBraziers)
+                if (!rr.things.Contains(extra))
+                    rr.things.Add(extra);
+            return true;
         }
     }
 
@@ -91,6 +102,7 @@ namespace EB
     {
         public static ThingDef Brazier;
         public static ThingDef ElectricBrazier;
+        public static ThingDef HolographicBrazier;
     }
 
     [HarmonyPatch(typeof(RoomRequirement_ThingCount), "Count")]
@@ -100,7 +112,8 @@ namespace EB
         {
             if (__instance.thingDef == DefOf.Brazier)
             {
-                __result += r.ThingCount(DefOf.ElectricBrazier);
+                foreach (var extra in Main.ExtraBraziers)
+                    __result += r.ThingCount(extra);
             }
         }
     }

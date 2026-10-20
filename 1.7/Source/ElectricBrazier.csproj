@@ -38,6 +38,10 @@
       <HintPath>$(RimWorldDir)\UnityStubs.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="Waylith">
+      <HintPath>$(RimWorldDir)\Waylith.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="0Harmony">
       <HintPath>$(HarmonyDir)\0Harmony.dll</HintPath>
       <Private>False</Private>
