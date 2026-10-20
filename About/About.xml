@@ -21,11 +21,11 @@ https://steamcommunity.com/sharedfiles/filedetails/?id=2555623506
 
 
 1.7 NOTE:
-I'm testing a LLM AI with this, specifically using Claude Opus 5.5. The logs are available on the git page, and my notes on the experience are below.
+I'm testing a LLM AI with this, specifically using Claude Opus 5.5. The logs are available on the git page, and my notes on the experience are below. 
 
-Duplicated incorrect location of library folders.
+Duplicated incorrect location of library folders.  
 
-Hallucinating dll's that don't exist to explain a problem.
+Hallucinating dll's that don't exist to explain a problem.  
 Hallucinating an xml that would never exist
 Incorrect powershell instructions
 
@@ -33,6 +33,32 @@ Made unrequested changes, esp. fixing something that it had no way of knowing wh
 
 Made filesystem changes without asking and without reporting
 Made an extra copy of the project file without asking and without actually using it in that or any other steps
+
+
+Provides lots of options and choices when starting something new that has been implied but not explicitly stated
+
+VERY complicated (negative) feelings about its treatment of 2d graphics.  My ideal would be for it to provide instructions in how the images are to be altered and saved, as this alone is complicated.  However, what it does instead is to make the changes and create the graphics without asking.  
+
+Evidently doing validation testing using offsite tools.  It did not ask, and was not explicit about what files were uploaded elsewhere.  
+
+Flavor text, especially description, has word choice that did not fit with the setting.  Decisions were made about details -- for example, location of research within tab -- without asking.
+
+Research xml is wrong; what was explained was that it would require Fabrication, not that there would be a research project after Fabrication.  
+
+Used a very generic prefix for the mod.  Normally acceptable, but not in the context of a game with thousands of mods.  
+
+Lied about reverting a change; "I made the change on top of your copy, so your reworded description (“anyone may walk across it freely”) is kept." It had reverted the change to its wording.
+
+It added a global variable that has to be set every frame regardless of whether any of the braziers are built.  This is extremely poor coding practice.  
+
+It keeps having issues with reverting changes that I make.  I wonder if it's not saving a copy locally when it's supposed to.   
+
+To be fair, I'm giving it complicated tasks, and for some of them I don't have a clear idea of how to accomplish them.  For example, I know VERY little about shaders.  I still feel like I could do better than this, though.  
+
+Also, I haven't learned anything.  I do these mods as a way to practice coding and learn more to extend my skills.  Even after reading through its code, I don't think I've learned anything, and I don't think this experience will carry over to the next project.  
+
+TODO: try having it only document existing code and find examples.
+TODO: try one of its "educational" modes.  I'll let it guide things to give it a fair chance.  
 
 
 
@@ -47,7 +73,7 @@ GitHub at: https://github.com/papercrane1001/-1001-ElectricBraziers-Continued-
 
 
 
-Version 2.1.0-1.7
+Version 2.1.1-1.7
 
 For version 1.4, 1.5, 1.6, and 1.7
   </description>

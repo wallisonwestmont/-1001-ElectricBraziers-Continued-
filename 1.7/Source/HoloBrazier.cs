@@ -8,10 +8,13 @@ namespace EB
     public class CompProperties_HoloBrazier : CompProperties
     {
         public string shaderDef = "ElectricBrazier_Hologram";
+        // Base shader: hides the base wherever the current flame frame covers it.
+        public string bodyShaderDef = "ElectricBrazier_HologramBase";
 
         public string bodyTexPath;
         public float bodySize = 1f;
-        public Color bodyColor = new Color(0.55f, 0.85f, 1f, 0.55f);
+        // Violet base so the light-blue flame stands out against it.
+        public Color bodyColor = new Color(0.72f, 0.52f, 1f, 0.55f);
 
         public List<string> flameTexPaths = new List<string>();
         public float flameSize = 0.83f;
@@ -37,7 +40,7 @@ namespace EB
         private CompPowerTrader power;
         private CompToggleGlower toggle;
 
-        private Material bodyMat;
+        private Material[] bodyMats; // one per flame frame (each masks out that frame)
         private Material[] flameMats;
         private Material[] flameMatsDark;
         private bool matsResolved;
@@ -93,10 +96,11 @@ namespace EB
                 shader = ShaderDatabase.TransparentPostLight;
             }
 
-            if (!Props.bodyTexPath.NullOrEmpty())
-                bodyMat = MaterialPool.MatFrom(Props.bodyTexPath, shader, Props.bodyColor);
-
             int n = Props.flameTexPaths.Count;
+
+            if (!Props.bodyTexPath.NullOrEmpty())
+                bodyMats = ResolveBodyMaterials(shader, n);
+
             flameMats = new Material[n];
             flameMatsDark = new Material[n];
             for (int i = 0; i < n; i++)
@@ -104,6 +108,41 @@ namespace EB
                 flameMats[i] = MaterialPool.MatFrom(Props.flameTexPaths[i], shader, Props.flameColor);
                 flameMatsDark[i] = MaterialPool.MatFrom(Props.flameTexPaths[i], shader, Props.flameColorDarklight);
             }
+        }
+
+        private Material[] ResolveBodyMaterials(Shader fallback, int frames)
+        {
+            ShaderDef def = DefDatabase<ShaderDef>.GetNamedSilentFail(Props.bodyShaderDef);
+            Shader shader = def != null ? def.Shader : null;
+            Texture2D bodyTex = ContentFinder<Texture2D>.Get(Props.bodyTexPath);
+
+            if (shader == null || !ShaderUtility.SupportsMaskTex(shader) || frames == 0)
+            {
+                Log.ErrorOnce($"[Electric Braziers] Hologram base shader '{Props.bodyShaderDef}' not available; base will not be masked by the flame.", 0x45422);
+                return new[] { MaterialPool.MatFrom(Props.bodyTexPath, fallback, Props.bodyColor) };
+            }
+
+            // Map base-quad texture coords onto flame-quad texture coords:
+            // flameUV = baseUV * scale + offset.
+            float scale = Props.bodySize / Props.flameSize;
+            float offX = 0.5f - 0.5f * scale - Props.flameOffset.x / Props.flameSize;
+            float offY = 0.5f - 0.5f * scale - Props.flameOffset.z / Props.flameSize;
+            Vector4 flameRect = new Vector4(scale, scale, offX, offY);
+
+            var mats = new Material[frames];
+            for (int i = 0; i < frames; i++)
+            {
+                var req = new MaterialRequest
+                {
+                    mainTex = bodyTex,
+                    shader = shader,
+                    color = Props.bodyColor,
+                    maskTex = ContentFinder<Texture2D>.Get(Props.flameTexPaths[i]),
+                };
+                mats[i] = MaterialPool.MatFrom(req);
+                mats[i].SetVector("_FlameRect", flameRect);
+            }
+            return mats;
         }
 
         public override void PostDraw()
@@ -118,15 +157,17 @@ namespace EB
             Vector3 pos = parent.DrawPos;
             pos.y = AltitudeLayer.BuildingOnTop.AltitudeFor();
 
-            if (bodyMat != null)
+            int frame = (flameMats != null && curFrame < flameMats.Length) ? curFrame : 0;
+
+            if (bodyMats != null && bodyMats.Length > 0)
             {
+                Material bodyMat = bodyMats[frame < bodyMats.Length ? frame : 0];
                 Matrix4x4 m = Matrix4x4.TRS(pos, Quaternion.identity, new Vector3(Props.bodySize, 1f, Props.bodySize));
                 Graphics.DrawMesh(MeshPool.plane10, m, bodyMat, 0);
             }
 
             if (flameMats != null && flameMats.Length > 0)
             {
-                int frame = curFrame < flameMats.Length ? curFrame : 0;
                 Material[] set = (toggle != null && toggle.IsDarklight) ? flameMatsDark : flameMats;
 
                 Vector3 fpos = pos + Props.flameOffset;

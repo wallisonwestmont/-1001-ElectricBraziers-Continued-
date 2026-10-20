@@ -14,4 +14,16 @@
     </shaderProgram>
   </ShaderDef>
 
+  <!-- Holographic brazier base: same look, but hidden wherever the current flame frame
+       (_MaskTex) covers it. Source: 1.7/Shaders/ElectricBrazier_HologramBase.frag.glsl -->
+  <ShaderDef>
+    <defName>ElectricBrazier_HologramBase</defName>
+    <shaderProgram>
+      <fragmentShaderFileName>ElectricBrazier_HologramBase.frag.glsl</fragmentShaderFileName>
+      <transparent>true</transparent>
+      <depthWrite>false</depthWrite>
+      <renderQueue>3150</renderQueue>
+    </shaderProgram>
+  </ShaderDef>
+
 </Defs>
